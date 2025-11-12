@@ -1,0 +1,177 @@
+Application Insights - Log Analytics Queries
+==============================================
+
+1. API Request Failures (Last 24 Hours)
+----------------------------------------
+requests
+| where timestamp > ago(24h)
+| where success == false
+| summarize count() by name, resultCode
+| order by count_ desc
+
+
+2. API Response Time (95th Percentile)
+---------------------------------------
+requests
+| where timestamp > ago(1h)
+| summarize percentile(duration, 95) by bin(timestamp, 5m)
+| render timechart
+
+
+3. Exception Details
+--------------------
+exceptions
+| where timestamp > ago(24h)
+| project timestamp, type, outerMessage, problemId
+| order by timestamp desc
+
+
+4. Database Query Performance
+------------------------------
+dependencies
+| where type == "SQL"
+| where timestamp > ago(1h)
+| summarize avg(duration), max(duration) by name
+| order by avg_duration desc
+
+
+5. Failed Requests by Operation
+---------------------------------
+requests
+| where timestamp > ago(24h)
+| where success == false
+| summarize failures = count() by operation_Name
+| order by failures desc
+
+
+6. API Endpoint Usage
+----------------------
+requests
+| where timestamp > ago(24h)
+| summarize requests = count() by name
+| order by requests desc
+
+
+7. Function App Health Checks
+-------------------------------
+requests
+| where name == "health"
+| where timestamp > ago(1h)
+| summarize success = countif(success == true),
+            failures = countif(success == false)
+            by bin(timestamp, 5m)
+| render timechart
+
+
+8. Custom Metrics - Market Analysis
+------------------------------------
+customMetrics
+| where name in ("markets_fetched", "prices_analyzed", "sentiment_calculated")
+| where timestamp > ago(24h)
+| summarize sum(value) by name, bin(timestamp, 1h)
+| render timechart
+
+
+9. User Activity
+-----------------
+customEvents
+| where name in ("market_viewed", "analysis_requested")
+| where timestamp > ago(24h)
+| summarize count() by name, bin(timestamp, 1h)
+| render timechart
+
+
+10. Performance Bottlenecks
+----------------------------
+requests
+| where timestamp > ago(1h)
+| where duration > 1000  // Over 1 second
+| project timestamp, name, duration, url
+| order by duration desc
+| take 20
+
+
+11. Database Connection Issues
+-------------------------------
+dependencies
+| where type == "SQL"
+| where success == false
+| where timestamp > ago(24h)
+| project timestamp, target, resultCode, data
+| order by timestamp desc
+
+
+12. Memory Usage Trends
+------------------------
+performanceCounters
+| where name == "Available Bytes" or name == "Process Private Bytes"
+| where timestamp > ago(24h)
+| summarize avg(value) by name, bin(timestamp, 30m)
+| render timechart
+
+
+13. Request Rate (Requests/Minute)
+-----------------------------------
+requests
+| where timestamp > ago(1h)
+| summarize count() by bin(timestamp, 1m)
+| render timechart
+
+
+14. Failed Dependency Calls
+----------------------------
+dependencies
+| where success == false
+| where timestamp > ago(24h)
+| summarize count() by type, target
+| order by count_ desc
+
+
+15. Slow Database Queries
+--------------------------
+dependencies
+| where type == "SQL"
+| where duration > 500  // Over 500ms
+| where timestamp > ago(24h)
+| project timestamp, name, duration, data
+| order by duration desc
+| take 20
+
+
+ALERT QUERIES
+=============
+
+Alert: High Error Rate (>5% in 5 minutes)
+------------------------------------------
+requests
+| where timestamp > ago(5m)
+| summarize total = count(), failures = countif(success == false)
+| extend errorRate = todouble(failures) / todouble(total) * 100
+| where errorRate > 5
+
+
+Alert: Slow Response Time (95th percentile > 2 seconds)
+--------------------------------------------------------
+requests
+| where timestamp > ago(5m)
+| summarize p95 = percentile(duration, 95)
+| where p95 > 2000
+
+
+Alert: Database Connection Failures
+------------------------------------
+dependencies
+| where type == "SQL"
+| where success == false
+| where timestamp > ago(5m)
+| summarize count()
+| where count_ > 5
+
+
+Alert: Function App Unhealthy
+------------------------------
+requests
+| where name == "health"
+| where timestamp > ago(5m)
+| summarize failures = countif(success == false)
+| where failures > 3

@@ -1,0 +1,136 @@
+{
+  "alertRules": [
+    {
+      "name": "High API Error Rate",
+      "description": "Triggers when error rate exceeds 5% in 5 minutes",
+      "severity": "High",
+      "query": "requests | where timestamp > ago(5m) | summarize total = count(), failures = countif(success == false) | extend errorRate = todouble(failures) / todouble(total) * 100 | where errorRate > 5",
+      "threshold": 5,
+      "evaluationFrequency": "PT5M",
+      "windowSize": "PT5M",
+      "actions": [
+        "email",
+        "webhook"
+      ]
+    },
+    {
+      "name": "Slow API Response Time",
+      "description": "Triggers when 95th percentile exceeds 2 seconds",
+      "severity": "Medium",
+      "query": "requests | where timestamp > ago(5m) | summarize p95 = percentile(duration, 95) | where p95 > 2000",
+      "threshold": 2000,
+      "evaluationFrequency": "PT5M",
+      "windowSize": "PT5M",
+      "actions": [
+        "email"
+      ]
+    },
+    {
+      "name": "Database Connection Failures",
+      "description": "Triggers when multiple database connections fail",
+      "severity": "Critical",
+      "query": "dependencies | where type == 'SQL' | where success == false | where timestamp > ago(5m) | summarize count() | where count_ > 5",
+      "threshold": 5,
+      "evaluationFrequency": "PT5M",
+      "windowSize": "PT5M",
+      "actions": [
+        "email",
+        "sms",
+        "webhook"
+      ]
+    },
+    {
+      "name": "Function App Health Check Failures",
+      "description": "Triggers when health endpoint fails multiple times",
+      "severity": "Critical",
+      "query": "requests | where name == 'health' | where timestamp > ago(5m) | summarize failures = countif(success == false) | where failures > 3",
+      "threshold": 3,
+      "evaluationFrequency": "PT1M",
+      "windowSize": "PT5M",
+      "actions": [
+        "email",
+        "sms",
+        "webhook"
+      ]
+    },
+    {
+      "name": "High Memory Usage",
+      "description": "Triggers when memory usage exceeds 85%",
+      "severity": "Medium",
+      "query": "performanceCounters | where name == 'Available Bytes' | where timestamp > ago(5m) | summarize avg(value) | extend usagePercent = (1 - (avg_value / 2147483648)) * 100 | where usagePercent > 85",
+      "threshold": 85,
+      "evaluationFrequency": "PT5M",
+      "windowSize": "PT5M",
+      "actions": [
+        "email"
+      ]
+    },
+    {
+      "name": "No Requests in 10 Minutes",
+      "description": "Triggers when API receives no requests (potential downtime)",
+      "severity": "High",
+      "query": "requests | where timestamp > ago(10m) | summarize count() | where count_ == 0",
+      "threshold": 0,
+      "evaluationFrequency": "PT10M",
+      "windowSize": "PT10M",
+      "actions": [
+        "email",
+        "webhook"
+      ]
+    },
+    {
+      "name": "Excessive Exceptions",
+      "description": "Triggers when exception rate is abnormally high",
+      "severity": "High",
+      "query": "exceptions | where timestamp > ago(5m) | summarize count() | where count_ > 10",
+      "threshold": 10,
+      "evaluationFrequency": "PT5M",
+      "windowSize": "PT5M",
+      "actions": [
+        "email"
+      ]
+    },
+    {
+      "name": "Static Web App Deployment Failure",
+      "description": "Triggers when frontend deployment fails",
+      "severity": "Medium",
+      "query": "traces | where message contains 'deployment' and message contains 'failed' | where timestamp > ago(15m) | summarize count() | where count_ > 0",
+      "threshold": 0,
+      "evaluationFrequency": "PT15M",
+      "windowSize": "PT15M",
+      "actions": [
+        "email"
+      ]
+    }
+  ],
+  "actionGroups": [
+    {
+      "name": "DevOps Team",
+      "shortName": "DevOps",
+      "emailReceivers": [
+        {
+          "name": "Primary Contact",
+          "emailAddress": "devops@example.com"
+        }
+      ],
+      "smsReceivers": [
+        {
+          "name": "On-Call Engineer",
+          "phoneNumber": "+1234567890"
+        }
+      ],
+      "webhookReceivers": [
+        {
+          "name": "Slack Webhook",
+          "serviceUri": "https://hooks.slack.com/services/YOUR/WEBHOOK/URL"
+        }
+      ]
+    }
+  ],
+  "notes": [
+    "Configure action groups in Azure Portal before enabling alerts",
+    "Adjust thresholds based on baseline metrics after monitoring for 1 week",
+    "Test alert delivery to ensure notifications work correctly",
+    "Review and tune alert rules monthly to reduce false positives"
+  ]
+}

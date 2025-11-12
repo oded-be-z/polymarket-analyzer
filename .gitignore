@@ -1,0 +1,83 @@
+# Environment variables and secrets
+.env
+.env.secrets
+.env.local
+
+# Logs
+*.log
+migration_log.json
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv
+env.bak/
+venv.bak/
+.python_packages/
+
+# Node.js
+node_modules/
+dist/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Database artifacts
+*.sql.gz
+*.dump
+backup_*.sql
+
+# Azure Functions
+bin
+obj
+csx
+.vs
+edge
+Publish
+
+*.user
+*.suo
+*.cscfg
+*.Cache
+project.lock.json
+
+/packages
+/TestResults
+/tools/NuGet.exe
+/App_Data
+/secrets
+/data
+.secrets
+appsettings.json
+local.settings.json
+
+# Azurite artifacts
+__blobstorage__
+__queuestorage__
+__azurite_db*__.json
+
+# Build outputs - DO NOT COMMIT
+.next/
+out/
+build/
+dist/
+*.zip
+_archive/
+
+# Azure sensitive files - DO NOT COMMIT
+azure-publish-profile-*.xml
+*.PublishSettings

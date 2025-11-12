@@ -1,0 +1,47 @@
+name: Deploy Frontend to Azure Web App
+
+on:
+  push:
+    branches:
+      - main
+      - feature/polymarket-web-app
+  workflow_dispatch:
+
+env:
+  AZURE_WEBAPP_NAME: polymarket-frontend
+  NODE_VERSION: '20.x'
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Next.js application
+        run: npm run build
+        env:
+          NEXT_PUBLIC_API_URL: https://polymarket-analyzer.azurewebsites.net/api
+
+      - name: Deploy to Azure Web App
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: ${{ env.AZURE_WEBAPP_NAME }}
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          package: .
+
+      - name: Check deployment
+        run: |
+          echo "Waiting 30 seconds for deployment to stabilize..."
+          sleep 30
+          curl -I https://${{ env.AZURE_WEBAPP_NAME }}.azurewebsites.net || echo "Site not responding yet"

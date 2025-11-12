@@ -1,0 +1,13 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "FUNCTIONS_WORKER_RUNTIME": "python",
+    "AzureWebJobsStorage": "",
+    "AZURE_OPENAI_ENDPOINT": "https://brn-azai.openai.azure.com/",
+    "GPT5_PRO_DEPLOYMENT_NAME": "gpt-5-pro",
+    "GPT5_PRO_KEY": "your_api_key_here",
+    "PERPLEXITY_API_KEY": "your_api_key_here",
+    "GEMINI_API_KEY": "your_api_key_here",
+    "POSTGRES_CONNECTION_STRING": "host=postgres-seekapatraining-prod.postgres.database.azure.com port=6432 dbname=seekapa_training user=seekapaadmin sslmode=require password=your_password_here"
+  }
+}
