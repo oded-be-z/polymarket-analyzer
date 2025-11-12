@@ -1,8 +1,9 @@
 # 🚨 DEPLOYMENT HANDOFF DOCUMENT
 
-**Date**: November 12, 2025 08:21 UTC
-**Status**: Frontend deployment blocked - 4 attempts failed
-**Current Run**: #4 in progress (may also fail)
+**Date**: November 12, 2025 08:33 UTC
+**Status**: ✅ FIX APPLIED - Run #5 in progress with Azure Oryx build
+**Previous Attempts**: Runs #1-4 failed (artifact@v4 + .gitignore issue)
+**Current Run**: #5 with simplified workflow (Azure builds)
 **Branch**: main
 **Repository**: https://github.com/oded-be-z/polymarket-analyzer
 
@@ -116,8 +117,42 @@ Azure logs show this error every time:
       tsconfig.json
 ```
 
-**Status**: 🔄 Currently in progress (08:19-08:21+)
-**Expected Result**: Will likely still fail because `actions/upload-artifact@v4` v4 has known issues with `.gitignore`
+**Status**: ✅ Completed successfully but deployment still failed
+**Result**: Same error - artifact v4 filtering persisted
+
+---
+
+### Run #5 (08:33 UTC) - Azure Oryx Build Strategy ✅ **FIX APPLIED**
+**Approach**: Let Azure handle the build entirely - deploy source code only
+
+**Changes Made**:
+1. **Azure Configuration** (via az cli):
+   ```bash
+   SCM_DO_BUILD_DURING_DEPLOYMENT=true
+   ENABLE_ORYX_BUILD=true
+   WEBSITE_NODE_DEFAULT_VERSION=~20
+   NPM_CONFIG_PRODUCTION=false
+   ```
+
+2. **Simplified Workflow** (commit 6c64e4d):
+   ```yaml
+   jobs:
+     deploy:
+       steps:
+       - uses: actions/checkout@v4
+       - uses: azure/webapps-deploy@v3
+         with:
+           package: .  # Deploy entire source code
+   ```
+
+**Why This Should Work**:
+- No artifact system = no .gitignore conflicts
+- Azure Oryx runs `npm install` and `npm run build` on the server
+- Fresh `node_modules/` and `.next/` generated directly on Azure
+- Standard deployment pattern for Next.js on Azure
+
+**Status**: 🔄 In progress (started 08:33 UTC)
+**Expected Timeline**: 3-5 minutes (Oryx build takes 2-4 min first time)
 
 ---
 
