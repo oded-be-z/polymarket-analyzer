@@ -1,0 +1,12 @@
+{
+  "apiRuntime": "node:18",
+  "navigationFallback": {
+    "rewrite": "/index.html"
+  },
+  "routes": [],
+  "responseOverrides": {
+    "404": {
+      "rewrite": "/404.html"
+    }
+  }
+}
