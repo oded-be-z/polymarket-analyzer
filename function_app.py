@@ -35,10 +35,31 @@ _price_cache: Dict[str, Dict] = {}
 _price_cache_time: Dict[str, datetime] = {}
 PRICE_CACHE_TTL = timedelta(seconds=5)
 
-# Initialize AI clients (singleton pattern)
-sentiment_analyzer = SentimentAnalyzer()
-azure_openai = AzureOpenAIClient()
-db_client = DatabaseClient()
+# Initialize AI clients (singleton pattern with lazy loading)
+_sentiment_analyzer = None
+_azure_openai = None
+_db_client = None
+
+def get_sentiment_analyzer():
+    """Get or create sentiment analyzer singleton"""
+    global _sentiment_analyzer
+    if _sentiment_analyzer is None:
+        _sentiment_analyzer = SentimentAnalyzer()
+    return _sentiment_analyzer
+
+def get_azure_openai():
+    """Get or create Azure OpenAI client singleton"""
+    global _azure_openai
+    if _azure_openai is None:
+        _azure_openai = AzureOpenAIClient()
+    return _azure_openai
+
+def get_db_client():
+    """Get or create database client singleton"""
+    global _db_client
+    if _db_client is None:
+        _db_client = DatabaseClient()
+    return _db_client
 
 
 # =============================================================================
@@ -46,7 +67,7 @@ db_client = DatabaseClient()
 # =============================================================================
 
 @app.function_name(name="health")
-@app.route(route="health", methods=["GET"])
+@app.route(route="health", methods=["GET"], auth_level=func.AuthLevel.ANONYMOUS)
 def health_check(req: func.HttpRequest) -> func.HttpResponse:
     """
     Health check endpoint with service status.
@@ -56,14 +77,19 @@ def health_check(req: func.HttpRequest) -> func.HttpResponse:
     """
     try:
         # Get AI services status
+        sentiment_analyzer = get_sentiment_analyzer()
         services_status = sentiment_analyzer.get_status_summary()
+
+        # Check database status
+        db_status = "available" if _database_available else "unavailable"
 
         return func.HttpResponse(
             json.dumps({
                 "status": "healthy",
                 "timestamp": datetime.utcnow().isoformat(),
                 "service": "polymarket-analyzer-backend",
-                "ai_services": services_status
+                "ai_services": services_status,
+                "database": db_status
             }),
             mimetype="application/json",
             status_code=200
@@ -82,7 +108,7 @@ def health_check(req: func.HttpRequest) -> func.HttpResponse:
 # =============================================================================
 
 @app.function_name(name="markets")
-@app.route(route="markets", methods=["GET"])
+@app.route(route="markets", methods=["GET"], auth_level=func.AuthLevel.ANONYMOUS)
 def get_markets(req: func.HttpRequest) -> func.HttpResponse:
     """
     Get all active markets from Polymarket.
@@ -141,10 +167,13 @@ def get_markets(req: func.HttpRequest) -> func.HttpResponse:
         client = get_polymarket_client()
         markets = client.get_markets(active_only=active_only)
 
-        # Store in database (upsert)
-        if markets:
-            logger.info(f"Storing {len(markets)} markets in database")
-            _upsert_markets(markets)
+        # Store in database (upsert) - gracefully handle DB failures
+        if markets and _database_available:
+            try:
+                logger.info(f"Storing {len(markets)} markets in database")
+                _upsert_markets(markets)
+            except Exception as db_error:
+                logger.warning(f"Failed to store markets in database (continuing without DB): {db_error}")
 
         # Prepare response
         response = {
@@ -196,7 +225,7 @@ def get_markets(req: func.HttpRequest) -> func.HttpResponse:
 # =============================================================================
 
 @app.function_name(name="price")
-@app.route(route="price/{token_id}", methods=["GET"])
+@app.route(route="price/{token_id}", methods=["GET"], auth_level=func.AuthLevel.ANONYMOUS)
 def get_price(req: func.HttpRequest) -> func.HttpResponse:
     """
     Get current price and 24h history for a specific market token.
@@ -327,7 +356,7 @@ def get_price(req: func.HttpRequest) -> func.HttpResponse:
 # SENTIMENT ENDPOINT (Agent 4 - Backend AI)
 # =============================================================================
 
-@app.route(route="sentiment", methods=["POST"], auth_level=func.AuthLevel.FUNCTION)
+@app.route(route="sentiment", methods=["POST"], auth_level=func.AuthLevel.ANONYMOUS)
 def sentiment_analysis(req: func.HttpRequest) -> func.HttpResponse:
     """
     Multi-source sentiment analysis endpoint
@@ -377,6 +406,9 @@ def sentiment_analysis(req: func.HttpRequest) -> func.HttpResponse:
 
         logger.info(f"Analyzing sentiment for market: {market_id}")
 
+        # Get sentiment analyzer (lazy-loaded)
+        sentiment_analyzer = get_sentiment_analyzer()
+
         # Perform multi-source sentiment analysis
         result = sentiment_analyzer.analyze_multi_source(
             market_title=market_title,
@@ -389,6 +421,7 @@ def sentiment_analysis(req: func.HttpRequest) -> func.HttpResponse:
 
         # Store in database
         try:
+            db_client = get_db_client()
             db_client.store_sentiment(market_id, result)
             logger.info(f"Sentiment stored in database for market {market_id}")
         except Exception as e:
@@ -425,7 +458,7 @@ def sentiment_analysis(req: func.HttpRequest) -> func.HttpResponse:
 # ANALYZE ENDPOINT (Agent 4 - Backend AI)
 # =============================================================================
 
-@app.route(route="analyze", methods=["POST"], auth_level=func.AuthLevel.FUNCTION)
+@app.route(route="analyze", methods=["POST"], auth_level=func.AuthLevel.ANONYMOUS)
 def market_analysis(req: func.HttpRequest) -> func.HttpResponse:
     """
     Comprehensive market analysis endpoint
@@ -481,6 +514,9 @@ def market_analysis(req: func.HttpRequest) -> func.HttpResponse:
 
         logger.info(f"Analyzing market: {market_id}")
 
+        # Get Azure OpenAI client (lazy-loaded)
+        azure_openai = get_azure_openai()
+
         # Perform comprehensive analysis using GPT-5-Pro
         analysis = azure_openai.analyze_market(
             market_id=market_id,
@@ -497,6 +533,7 @@ def market_analysis(req: func.HttpRequest) -> func.HttpResponse:
 
         # Store in database
         try:
+            db_client = get_db_client()
             db_client.store_analysis(market_id, analysis)
             logger.info(f"Analysis stored in database for market {market_id}")
         except Exception as e:
@@ -652,10 +689,30 @@ def _get_price_history_24h(token_id: str) -> List[Dict]:
 # INITIALIZATION
 # =============================================================================
 
-# Initialize database on startup
+# Database initialization - graceful degradation
+_database_available = False
+
+def ensure_database_initialized():
+    """
+    Ensure database is initialized. Returns True if successful, False otherwise.
+    Functions can still register even if database init fails.
+    """
+    global _database_available
+    if not _database_available:
+        try:
+            logger.info("Initializing database schema")
+            init_database()
+            _database_available = True
+            logger.info("✅ Database initialized successfully")
+        except Exception as e:
+            logger.error(f"❌ Database initialization failed: {e}")
+            logger.warning("Functions will register but database operations may fail")
+            # DO NOT raise - allow functions to register
+    return _database_available
+
+# Attempt database init but don't block function registration
 try:
-    logger.info("Initializing database schema")
-    init_database()
+    ensure_database_initialized()
 except Exception as e:
-    logger.error(f"Failed to initialize database: {e}")
-    # Continue anyway - database might already be initialized
+    logger.error(f"Database init attempt failed: {e}")
+    # Continue - functions will still register

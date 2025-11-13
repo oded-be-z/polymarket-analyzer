@@ -1,82 +1,117 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useMemo } from 'react'
+import { useRouter } from 'next/navigation'
 import MarketCard from './MarketCard'
 import { SkeletonCard } from '@/components/ui/Skeleton'
 import { Market } from '@/lib/types'
-
-// Mock data for demonstration
-const MOCK_MARKETS: Market[] = [
-  {
-    id: '1',
-    question: 'Will Bitcoin reach $100,000 by end of 2025?',
-    category: 'Crypto',
-    yesPrice: 0.62,
-    noPrice: 0.38,
-    volume24h: 1250000,
-    liquidity: 450000,
-    endDate: new Date('2025-12-31'),
-    active: true,
-    sentiment: {
-      score: 0.45,
-      confidence: 0.78,
-    },
-  },
-  {
-    id: '2',
-    question: 'Will the Democrats win the 2024 Presidential Election?',
-    category: 'Politics',
-    yesPrice: 0.48,
-    noPrice: 0.52,
-    volume24h: 3400000,
-    liquidity: 1200000,
-    endDate: new Date('2024-11-05'),
-    active: true,
-    sentiment: {
-      score: -0.12,
-      confidence: 0.65,
-    },
-  },
-  {
-    id: '3',
-    question: 'Will Ethereum have a successful Shanghai upgrade?',
-    category: 'Crypto',
-    yesPrice: 0.85,
-    noPrice: 0.15,
-    volume24h: 890000,
-    liquidity: 320000,
-    endDate: new Date('2024-04-30'),
-    active: false,
-    sentiment: {
-      score: 0.72,
-      confidence: 0.88,
-    },
-  },
-  {
-    id: '4',
-    question: 'Will the Fed raise interest rates in Q1 2025?',
-    category: 'Economics',
-    yesPrice: 0.35,
-    noPrice: 0.65,
-    volume24h: 670000,
-    liquidity: 280000,
-    endDate: new Date('2025-03-31'),
-    active: true,
-    sentiment: {
-      score: -0.38,
-      confidence: 0.71,
-    },
-  },
-]
+import { useFilters } from '@/lib/context/FilterContext'
+import { getMarkets } from '@/lib/api-client'
 
 export default function MarketList() {
-  const [markets] = useState<Market[]>(MOCK_MARKETS)
-  const [loading] = useState(false)
+  const router = useRouter()
+  const [loading, setLoading] = useState(true)
+  const [allMarkets, setAllMarkets] = useState<Market[]>([])
+  const [error, setError] = useState<string | null>(null)
+  const {
+    activeFilter,
+    category,
+    volumeRange,
+    sentimentFilter,
+    sortBy,
+    searchQuery,
+  } = useFilters()
+
+  // Fetch markets from API
+  useEffect(() => {
+    async function fetchMarkets() {
+      try {
+        setLoading(true)
+        setError(null)
+        const markets = await getMarkets({ active: true })
+        setAllMarkets(markets)
+      } catch (err) {
+        console.error('Failed to fetch markets:', err)
+        setError(err instanceof Error ? err.message : 'Failed to load markets')
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchMarkets()
+  }, [])
 
   const handleMarketClick = (market: Market) => {
-    console.log('Market clicked:', market.id)
-    // In real app: navigate to market detail page
+    router.push(`/market/${market.id}`)
   }
+
+  // Filter and sort markets based on context
+  const markets = useMemo(() => {
+    let filtered = [...allMarkets]
+
+    // Filter by active/closed status
+    if (activeFilter === 'active') {
+      filtered = filtered.filter((m) => m.active)
+    } else if (activeFilter === 'closed') {
+      filtered = filtered.filter((m) => !m.active)
+    }
+
+    // Filter by category
+    if (category !== 'all') {
+      filtered = filtered.filter(
+        (m) => m.category.toLowerCase() === category.toLowerCase()
+      )
+    }
+
+    // Filter by search query
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase()
+      filtered = filtered.filter((m) =>
+        m.question.toLowerCase().includes(query)
+      )
+    }
+
+    // Filter by volume range (0-100 maps to $0-$10M)
+    const minVolume = (volumeRange[0] / 100) * 10000000
+    const maxVolume = (volumeRange[1] / 100) * 10000000
+    filtered = filtered.filter(
+      (m) => m.volume24h >= minVolume && m.volume24h <= maxVolume
+    )
+
+    // Filter by sentiment
+    if (sentimentFilter.length > 0) {
+      filtered = filtered.filter((m) => {
+        if (!m.sentiment) return false
+        const score = m.sentiment.score
+        return sentimentFilter.some((filter) => {
+          if (filter === 'bullish') return score > 0.2
+          if (filter === 'bearish') return score < -0.2
+          if (filter === 'neutral') return score >= -0.2 && score <= 0.2
+          return false
+        })
+      })
+    }
+
+    // Sort markets
+    filtered.sort((a, b) => {
+      switch (sortBy) {
+        case 'volume':
+          return b.volume24h - a.volume24h
+        case 'sentiment':
+          return (b.sentiment?.score || 0) - (a.sentiment?.score || 0)
+        case 'liquidity':
+          return b.liquidity - a.liquidity
+        case 'ending':
+          return a.endDate.getTime() - b.endDate.getTime()
+        case 'recent':
+          return b.id.localeCompare(a.id) // Mock: use ID as proxy for recency
+        default:
+          return 0
+      }
+    })
+
+    return filtered
+  }, [allMarkets, activeFilter, category, volumeRange, sentimentFilter, sortBy, searchQuery])
 
   if (loading) {
     return (
@@ -84,6 +119,36 @@ export default function MarketList() {
         {[1, 2, 3, 4, 5, 6].map((i) => (
           <SkeletonCard key={i} />
         ))}
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center py-16 px-4">
+        <div className="text-center max-w-md">
+          <svg
+            className="w-16 h-16 text-red-500 mx-auto mb-4"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
+          <h3 className="text-xl font-semibold text-white mb-2">Failed to load markets</h3>
+          <p className="text-gray-400 mb-4">{error}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+          >
+            Retry
+          </button>
+        </div>
       </div>
     )
   }

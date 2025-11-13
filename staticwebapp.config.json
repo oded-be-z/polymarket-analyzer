@@ -1,5 +1,7 @@
 {
-  "apiRuntime": "node:18",
+  "platform": {
+    "apiRuntime": "node:20"
+  },
   "navigationFallback": {
     "rewrite": "/index.html"
   },

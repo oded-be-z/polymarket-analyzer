@@ -39,12 +39,13 @@ def get_connection_pool() -> pool.ThreadedConnectionPool:
 
         # Get connection parameters from environment
         host = os.getenv("POSTGRES_HOST", "postgres-seekapatraining-prod.postgres.database.azure.com")
-        port = os.getenv("POSTGRES_PORT", "6432")  # PgBouncer port
-        database = os.getenv("POSTGRES_DB", "seekapa_training")
+        port = os.getenv("POSTGRES_PORT", "5432")  # PostgreSQL port (changed from 6432)
+        database = os.getenv("POSTGRES_DB", "polymarket_analyzer")  # Changed from seekapa_training
         user = os.getenv("POSTGRES_USER", "seekapaadmin")
         password = os.getenv("POSTGRES_PASSWORD")
 
         if not password:
+            logger.warning("POSTGRES_PASSWORD not set, database operations will fail")
             raise ValueError("POSTGRES_PASSWORD environment variable not set")
 
         try:

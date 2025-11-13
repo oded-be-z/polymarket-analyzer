@@ -3,6 +3,9 @@ import Sidebar from '@/components/layout/Sidebar'
 import Footer from '@/components/layout/Footer'
 import MarketList from '@/components/markets/MarketList'
 
+// Force dynamic rendering to enable client-side data fetching
+export const dynamic = 'force-dynamic'
+
 export default function Home() {
   return (
     <div className="flex min-h-screen flex-col">

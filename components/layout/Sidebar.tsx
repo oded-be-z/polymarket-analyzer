@@ -1,9 +1,9 @@
 'use client'
 
-import { useState } from 'react'
-import { FunnelIcon, AdjustmentsHorizontalIcon } from '@heroicons/react/24/outline'
+import { FunnelIcon } from '@heroicons/react/24/outline'
 import Select from '@/components/ui/Select'
 import Badge from '@/components/ui/Badge'
+import { useFilters } from '@/lib/context/FilterContext'
 
 const categoryOptions = [
   { value: 'all', label: 'All Categories' },
@@ -23,17 +23,25 @@ const sortOptions = [
 ]
 
 export default function Sidebar() {
-  const [activeFilter, setActiveFilter] = useState('all')
-  const [volumeRange, setVolumeRange] = useState([0, 100])
-  const [category, setCategory] = useState('all')
-  const [sortBy, setSortBy] = useState('volume')
-  const [sentimentFilter, setSentimentFilter] = useState<string[]>([])
+  const {
+    activeFilter,
+    setActiveFilter,
+    volumeRange,
+    setVolumeRange,
+    category,
+    setCategory,
+    sortBy,
+    setSortBy,
+    sentimentFilter,
+    setSentimentFilter,
+    resetFilters,
+  } = useFilters()
 
   const toggleSentiment = (sentiment: string) => {
-    setSentimentFilter((prev) =>
-      prev.includes(sentiment)
-        ? prev.filter((s) => s !== sentiment)
-        : [...prev, sentiment]
+    setSentimentFilter(
+      sentimentFilter.includes(sentiment)
+        ? sentimentFilter.filter((s) => s !== sentiment)
+        : [...sentimentFilter, sentiment]
     )
   }
 
@@ -46,7 +54,10 @@ export default function Sidebar() {
             <FunnelIcon className="h-5 w-5 text-gray-400" />
             <h2 className="text-lg font-semibold text-white">Filters</h2>
           </div>
-          <button className="text-sm text-primary-500 hover:text-primary-400">
+          <button
+            onClick={resetFilters}
+            className="text-sm text-primary-500 hover:text-primary-400"
+          >
             Reset
           </button>
         </div>

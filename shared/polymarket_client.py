@@ -87,14 +87,22 @@ class PolymarketClient:
 
         try:
             # Get all markets from CLOB API
+            # Note: get_markets() returns a dict with "data" key containing list of markets
             markets_response = self._retry_request(self.client.get_markets)
 
             if not markets_response:
                 logger.warning("No markets returned from API")
                 return []
 
+            # Extract markets list from response dict
+            markets_list = markets_response.get('data', []) if isinstance(markets_response, dict) else markets_response
+
+            if not markets_list:
+                logger.warning("No markets data in API response")
+                return []
+
             markets = []
-            for market in markets_response:
+            for market in markets_list:
                 try:
                     # Check if market is active
                     is_active = market.get('active', True)

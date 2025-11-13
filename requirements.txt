@@ -4,6 +4,7 @@ azure-identity==1.18.0
 
 # Polymarket Integration
 py-clob-client==0.28.0
+httpx<0.28  # Pin httpx to <0.28 to fix 'proxies' parameter error with py-clob-client
 
 # Azure OpenAI (for sentiment analysis)
 openai==1.54.0

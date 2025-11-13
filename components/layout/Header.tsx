@@ -1,16 +1,32 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { MagnifyingGlassIcon, MoonIcon, SunIcon } from '@heroicons/react/24/outline'
-import Input from '@/components/ui/Input'
 import Button from '@/components/ui/Button'
+import { useFilters } from '@/lib/context/FilterContext'
 
 export default function Header() {
+  const router = useRouter()
   const [isDark, setIsDark] = useState(true)
+  const { searchQuery, setSearchQuery } = useFilters()
 
   const toggleTheme = () => {
     setIsDark(!isDark)
     document.documentElement.classList.toggle('dark')
+  }
+
+  const handleMarketsClick = () => {
+    router.push('/')
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
+  const handlePortfolioClick = () => {
+    alert('Portfolio feature coming soon!')
+  }
+
+  const handleAlertsClick = () => {
+    alert('Alerts feature coming soon!')
   }
 
   return (
@@ -45,6 +61,8 @@ export default function Header() {
             <MagnifyingGlassIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
             <input
               type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search markets..."
               className="w-full pl-10 pr-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
             />
@@ -54,13 +72,13 @@ export default function Header() {
         {/* Navigation & Actions */}
         <div className="flex items-center gap-4">
           <nav className="hidden lg:flex items-center gap-1">
-            <Button variant="ghost" size="sm">
+            <Button variant="ghost" size="sm" onClick={handleMarketsClick}>
               Markets
             </Button>
-            <Button variant="ghost" size="sm">
+            <Button variant="ghost" size="sm" onClick={handlePortfolioClick}>
               Portfolio
             </Button>
-            <Button variant="ghost" size="sm">
+            <Button variant="ghost" size="sm" onClick={handleAlertsClick}>
               Alerts
             </Button>
           </nav>
