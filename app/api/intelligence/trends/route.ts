@@ -14,6 +14,10 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getPerplexityClient } from '@/lib/perplexity-client'
 import { ApiResponse, ErrorCode } from '@/INTERFACE_CONTRACTS'
 
+// Force dynamic rendering - prevent static generation at build time
+export const dynamic = 'force-dynamic';
+
+
 export const runtime = 'edge'
 
 export async function GET(request: NextRequest) {

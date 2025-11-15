@@ -9,6 +9,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import { stripeClient } from '@/lib/stripe-client';
 import { SubscriptionTier } from '@/INTERFACE_CONTRACTS';
 
+// Force dynamic rendering - prevent static generation at build time
+export const dynamic = 'force-dynamic';
+
+
 export async function POST(request: NextRequest) {
   try {
     // Parse request body

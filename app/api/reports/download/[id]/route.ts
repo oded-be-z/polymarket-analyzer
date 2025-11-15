@@ -11,6 +11,10 @@ import { ApiResponse, ErrorCode } from '@/INTERFACE_CONTRACTS';
 import * as fs from 'fs/promises';
 import * as path from 'path';
 
+// Force dynamic rendering - prevent static generation at build time
+export const dynamic = 'force-dynamic';
+
+
 interface RouteParams {
   params: {
     id: string;

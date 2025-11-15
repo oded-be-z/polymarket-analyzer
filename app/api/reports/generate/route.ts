@@ -110,6 +110,10 @@ export async function POST(request: NextRequest) {
  * Build report content from various data sources
  * TODO: Replace with actual API integrations
  */
+
+// Force dynamic rendering - prevent static generation at build time
+export const dynamic = 'force-dynamic';
+
 async function buildReportContent(
   marketId: string,
   includePerplexity: boolean

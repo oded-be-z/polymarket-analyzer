@@ -11,6 +11,10 @@ import { PDFReportMetadata, ApiResponse, ErrorCode } from '@/INTERFACE_CONTRACTS
 import * as fs from 'fs/promises';
 import * as path from 'path';
 
+// Force dynamic rendering - prevent static generation at build time
+export const dynamic = 'force-dynamic';
+
+
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);

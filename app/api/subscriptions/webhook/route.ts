@@ -157,6 +157,10 @@ async function handleInvoicePaymentSucceeded(invoice: Stripe.Invoice) {
 /**
  * Handle failed invoice payment
  */
+
+// Force dynamic rendering - prevent static generation at build time
+export const dynamic = 'force-dynamic';
+
 async function handleInvoicePaymentFailed(invoice: Stripe.Invoice) {
   console.log('Invoice payment failed:', invoice.id);
 

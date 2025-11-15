@@ -8,6 +8,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { stripeClient } from '@/lib/stripe-client';
 
+// Force dynamic rendering - prevent static generation at build time
+export const dynamic = 'force-dynamic';
+
+
 export async function GET(request: NextRequest) {
   try {
     // TODO: Get user ID from session/auth
