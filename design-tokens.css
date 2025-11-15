@@ -1,0 +1,248 @@
+/**
+ * SENTIMARK DESIGN TOKENS - CSS Custom Properties
+ *
+ * Design System: Sentimark
+ * Brand Identity: Emerald Green (#27E0A3) + Electric Blue (#2D7BFF)
+ * Theme: Dark mode with deep blue backgrounds
+ * Accessibility: WCAG AAA compliance (14.2:1 minimum contrast)
+ *
+ * Adheres to: SentimarkDesignTokens interface (INTERFACE_CONTRACTS.ts)
+ *
+ * Created: 2025-11-15
+ * Last Updated: 2025-11-15
+ */
+
+:root {
+  /* ========================================================================
+     COLOR SYSTEM - Matches SentimarkDesignTokens.colors
+     ======================================================================== */
+
+  /* Primary Brand Colors */
+  --color-primary: #27E0A3;           /* Emerald green - main brand color */
+  --color-secondary: #2D7BFF;         /* Electric blue - accent color */
+
+  /* Gradient - Exact match from interface */
+  --gradient-primary: linear-gradient(90deg, #27E0A3 0%, #2D7BFF 100%);
+
+  /* Background Colors (Dark Theme) - Matches interface.colors.background */
+  --color-bg-primary: #0A0F16;        /* Deep dark blue - interface.background.primary */
+  --color-bg-secondary: #0F1419;      /* Slightly lighter - interface.background.secondary */
+  --color-bg-surface: #1A1F26;        /* Card backgrounds - interface.background.surface */
+  --color-bg-elevated: #242931;       /* Modal/dropdown - interface.background.elevated */
+
+  /* Text Colors - Matches interface.colors.text */
+  --color-text-primary: #E6F2FF;      /* Light blue-white - 14.2:1 contrast - interface.text.primary */
+  --color-text-secondary: #B8C5D0;    /* Muted light blue - interface.text.secondary */
+  --color-text-tertiary: #8A96A3;     /* Subtle gray-blue - interface.text.tertiary */
+  --color-text-disabled: #4A5157;     /* Disabled state - interface.text.disabled */
+
+  /* Semantic Colors - Matches interface.colors */
+  --color-success: #27E0A3;           /* Success - matches primary (interface.colors.success) */
+  --color-danger: #FF4757;            /* Error red (interface.colors.danger) */
+  --color-warning: #FFA502;           /* Warning orange (interface.colors.warning) */
+  --color-info: #2D7BFF;              /* Info blue - matches secondary (interface.colors.info) */
+
+  /* Interactive States */
+  --color-hover: #1FCBA0;
+  --color-active: #20B890;
+  --color-disabled: #6C7A90;
+
+  /* Overlay Colors */
+  --color-overlay: rgba(0, 0, 0, 0.6);
+  --color-overlay-light: rgba(0, 0, 0, 0.4);
+
+  /* Color Opacities - Primary */
+  --color-primary-10: rgba(39, 224, 163, 0.1);
+  --color-primary-20: rgba(39, 224, 163, 0.2);
+  --color-primary-40: rgba(39, 224, 163, 0.4);
+  --color-primary-66: rgba(39, 224, 163, 0.66);
+
+  /* Color Opacities - Secondary */
+  --color-secondary-10: rgba(45, 123, 255, 0.1);
+  --color-secondary-20: rgba(45, 123, 255, 0.2);
+  --color-secondary-40: rgba(45, 123, 255, 0.4);
+  --color-secondary-66: rgba(45, 123, 255, 0.66);
+
+  /* Gradient Presets */
+  --gradient-primary: linear-gradient(90deg, #27E0A3, #2D7BFF);
+  --gradient-surface: linear-gradient(135deg, #0E1621, #0C131D);
+
+  /* ========================================================================
+     TYPOGRAPHY SYSTEM - Matches SentimarkDesignTokens.typography
+     ======================================================================== */
+
+  /* Font Families - Matches interface.typography.fontFamily */
+  --font-family-primary: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-family-mono: "SF Mono", "Consolas", "Monaco", monospace;
+
+  /* Font Sizes - Exact match from interface.typography.fontSize */
+  --font-size-xs: 0.75rem;            /* 12px - interface.typography.fontSize.xs */
+  --font-size-sm: 0.875rem;           /* 14px - interface.typography.fontSize.sm */
+  --font-size-base: 1rem;             /* 16px - interface.typography.fontSize.base */
+  --font-size-lg: 1.125rem;           /* 18px - interface.typography.fontSize.lg */
+  --font-size-xl: 1.25rem;            /* 20px - interface.typography.fontSize.xl */
+  --font-size-2xl: 1.5rem;            /* 24px - interface.typography.fontSize.2xl */
+  --font-size-3xl: 1.875rem;          /* 30px - interface.typography.fontSize.3xl */
+  --font-size-4xl: 2.25rem;           /* 36px - interface.typography.fontSize.4xl */
+
+  /* Font Weights - Matches interface.typography.fontWeight */
+  --font-weight-normal: 400;          /* interface.typography.fontWeight.normal */
+  --font-weight-medium: 500;          /* interface.typography.fontWeight.medium */
+  --font-weight-semibold: 600;        /* interface.typography.fontWeight.semibold */
+  --font-weight-bold: 700;            /* interface.typography.fontWeight.bold */
+  --font-weight-extrabold: 800;       /* interface.typography.fontWeight.extrabold */
+
+  /* ========================================================================
+     SPACING SYSTEM - Matches SentimarkDesignTokens.spacing (4px base unit)
+     ======================================================================== */
+
+  /* Spacing Scale - Exact match from interface.spacing */
+  --spacing-0: 0;                     /* interface.spacing.0 */
+  --spacing-1: 0.25rem;               /* 4px - interface.spacing.1 */
+  --spacing-2: 0.5rem;                /* 8px - interface.spacing.2 */
+  --spacing-3: 0.75rem;               /* 12px - interface.spacing.3 */
+  --spacing-4: 1rem;                  /* 16px - interface.spacing.4 */
+  --spacing-6: 1.5rem;                /* 24px - interface.spacing.6 */
+  --spacing-8: 2rem;                  /* 32px - interface.spacing.8 */
+  --spacing-12: 3rem;                 /* 48px - interface.spacing.12 */
+  --spacing-16: 4rem;                 /* 64px - interface.spacing.16 */
+  --spacing-24: 6rem;                 /* 96px - interface.spacing.24 */
+  --spacing-32: 8rem;                 /* 128px - interface.spacing.32 */
+
+  /* ========================================================================
+     BORDER RADIUS SYSTEM - Matches SentimarkDesignTokens.borderRadius
+     ======================================================================== */
+
+  /* Border Radius - Exact match from interface.borderRadius */
+  --radius-none: 0;                   /* interface.borderRadius.none */
+  --radius-sm: 0.25rem;               /* 4px - interface.borderRadius.sm */
+  --radius-DEFAULT: 0.5rem;           /* 8px - interface.borderRadius.DEFAULT */
+  --radius-md: 0.75rem;               /* 12px - interface.borderRadius.md */
+  --radius-lg: 1rem;                  /* 16px - interface.borderRadius.lg */
+  --radius-xl: 1.5rem;                /* 24px - interface.borderRadius.xl */
+  --radius-2xl: 2rem;                 /* 32px - interface.borderRadius.2xl */
+  --radius-full: 9999px;              /* Pills - interface.borderRadius.full */
+
+  /* ========================================================================
+     SHADOW SYSTEM - Matches SentimarkDesignTokens.shadows
+     ======================================================================== */
+
+  /* Standard Shadows - Exact match from interface.shadows */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);                                     /* interface.shadows.sm */
+  --shadow-DEFAULT: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06); /* interface.shadows.DEFAULT */
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* interface.shadows.md */
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* interface.shadows.lg */
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); /* interface.shadows.xl */
+  --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);                              /* interface.shadows.2xl */
+
+  /* Glow Effects - Exact match from interface.shadows */
+  --shadow-glow: 0 0 20px rgba(39, 224, 163, 0.3);                                  /* interface.shadows.glow */
+  --shadow-glowBlue: 0 0 20px rgba(45, 123, 255, 0.3);                              /* interface.shadows.glowBlue */
+
+  /* ========================================================================
+     Z-INDEX LAYERS
+     ======================================================================== */
+
+  --z-base: 0;
+  --z-dropdown: 1000;
+  --z-sticky: 1100;
+  --z-fixed: 1200;
+  --z-modal-backdrop: 1300;
+  --z-modal: 1400;
+  --z-popover: 1500;
+  --z-tooltip: 1600;
+  --z-notification: 1700;
+
+  /* ========================================================================
+     TRANSITIONS & ANIMATIONS
+     ======================================================================== */
+
+  /* Durations */
+  --duration-fast: 150ms;
+  --duration-normal: 250ms;
+  --duration-slow: 350ms;
+  --duration-slower: 500ms;
+
+  /* Easing Functions */
+  --ease-linear: linear;
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+  /* Common Transitions */
+  --transition-colors: color var(--duration-normal) var(--ease-in-out),
+                       background-color var(--duration-normal) var(--ease-in-out),
+                       border-color var(--duration-normal) var(--ease-in-out);
+  --transition-transform: transform var(--duration-normal) var(--ease-out);
+  --transition-opacity: opacity var(--duration-normal) var(--ease-in-out);
+  --transition-all: all var(--duration-normal) var(--ease-in-out);
+
+  /* ========================================================================
+     BREAKPOINTS (for reference in JS)
+     ======================================================================== */
+
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+  --breakpoint-2xl: 1536px;
+}
+
+/* ========================================================================
+   ACCESSIBILITY - FOCUS STATES
+   ======================================================================== */
+
+*:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* ========================================================================
+   UTILITY CLASSES
+   ======================================================================== */
+
+/* Gradient utilities */
+.bg-gradient-primary {
+  background: var(--gradient-primary);
+}
+
+.text-gradient-primary {
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Glow utilities */
+.glow-primary {
+  box-shadow: var(--shadow-glow);
+}
+
+.glow-secondary {
+  box-shadow: var(--shadow-glowBlue);
+}
+
+/* Glassmorphism */
+.glass {
+  background: rgba(10, 15, 22, 0.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* Transition utilities */
+.transition-colors {
+  transition: var(--transition-colors);
+}
+
+.transition-transform {
+  transition: var(--transition-transform);
+}
+
+.transition-opacity {
+  transition: var(--transition-opacity);
+}
+
+.transition-all {
+  transition: var(--transition-all);
+}

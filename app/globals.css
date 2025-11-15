@@ -1,25 +1,25 @@
+/* Import Sentimark Design Tokens - Agent A deliverable */
+@import '../design-tokens.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
-  :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-  }
-
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-  }
-}
-
-@layer base {
   * {
-    @apply border-gray-700;
+    border-color: #374151;
   }
+
+  /* Apply Sentimark color scheme globally */
   body {
-    @apply bg-gray-900 text-gray-100;
+    background-color: var(--color-bg-primary);
+    color: var(--color-text-primary);
+    font-family: var(--font-family-primary);
+  }
+
+  /* Override default focus rings with Sentimark primary color */
+  *:focus-visible {
+    outline-color: var(--color-primary);
   }
 }
 
@@ -35,25 +35,26 @@
   transition-duration: 200ms;
 }
 
-/* Custom scrollbar */
+/* Custom scrollbar - Sentimark themed */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  @apply bg-gray-800;
+  background-color: var(--color-bg-secondary);
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-gray-600 rounded-full;
+  background: linear-gradient(180deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+  border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  @apply bg-gray-500;
+  background: var(--color-primary);
 }
 
-/* Loading skeleton animation */
+/* Loading skeleton animation - Sentimark themed */
 @keyframes shimmer {
   0% {
     background-position: -1000px 0;
@@ -67,10 +68,10 @@
   animation: shimmer 2s infinite;
   background: linear-gradient(
     to right,
-    #1f2937 0%,
-    #374151 20%,
-    #1f2937 40%,
-    #1f2937 100%
+    var(--color-bg-secondary) 0%,
+    var(--color-bg-surface) 20%,
+    var(--color-bg-secondary) 40%,
+    var(--color-bg-secondary) 100%
   );
   background-size: 1000px 100%;
 }
