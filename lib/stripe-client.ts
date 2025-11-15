@@ -15,10 +15,9 @@ function getStripe(): Stripe {
   if (!stripeInstance) {
     const secretKey = process.env.STRIPE_SECRET_KEY;
     if (!secretKey) {
-      // Return a mock during build time to avoid build errors
-      // The actual error will be thrown at runtime if Stripe is actually used
-      console.warn('[Build] STRIPE_SECRET_KEY not set - Stripe features will be disabled');
-      return {} as Stripe;
+      // During build, environment variables may not be set
+      // Return a mock that will throw errors if actually used at runtime
+      throw new Error('STRIPE_SECRET_KEY environment variable is not set. Please configure it in production.');
     }
     stripeInstance = new Stripe(secretKey, {
       apiVersion: '2025-10-29.clover',
@@ -31,6 +30,15 @@ function getStripe(): Stripe {
   }
   return stripeInstance;
 }
+
+// Create a Proxy that delays Stripe initialization until first use
+// This prevents errors during Next.js build phase when env vars aren't available
+export const stripe = new Proxy({} as Stripe, {
+  get(target, prop) {
+    const actualStripe = getStripe();
+    return actualStripe[prop as keyof Stripe];
+  }
+});
 
 /**
  * Database client (placeholder - will be replaced with actual DB client)
