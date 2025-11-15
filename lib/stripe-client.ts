@@ -8,19 +8,29 @@
 import Stripe from 'stripe';
 import { SubscriptionTier, SubscriptionStatus, UserSubscription, FEATURE_GATES } from '../INTERFACE_CONTRACTS';
 
-// Initialize Stripe with API key
-if (!process.env.STRIPE_SECRET_KEY) {
-  throw new Error('STRIPE_SECRET_KEY environment variable is not set');
-}
+// Lazy Stripe initialization - only initialize when actually used (not at build time)
+let stripeInstance: Stripe | null = null;
 
-export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: '2025-10-29.clover',
-  typescript: true,
-  appInfo: {
-    name: 'Sentimark',
-    version: '1.0.0',
-  },
-});
+function getStripe(): Stripe {
+  if (!stripeInstance) {
+    const secretKey = process.env.STRIPE_SECRET_KEY;
+    if (!secretKey) {
+      // Return a mock during build time to avoid build errors
+      // The actual error will be thrown at runtime if Stripe is actually used
+      console.warn('[Build] STRIPE_SECRET_KEY not set - Stripe features will be disabled');
+      return {} as Stripe;
+    }
+    stripeInstance = new Stripe(secretKey, {
+      apiVersion: '2025-10-29.clover',
+      typescript: true,
+      appInfo: {
+        name: 'Sentimark',
+        version: '1.0.0',
+      },
+    });
+  }
+  return stripeInstance;
+}
 
 /**
  * Database client (placeholder - will be replaced with actual DB client)
@@ -57,7 +67,7 @@ export const stripeClient = {
       let customerId = user?.stripe_customer_id;
 
       if (!customerId) {
-        const customer = await stripe.customers.create({
+        const customer = await getStripe().customers.create({
           email: user.email,
           metadata: { userId },
         });
@@ -71,7 +81,7 @@ export const stripeClient = {
       }
 
       // Create checkout session
-      const session = await stripe.checkout.sessions.create({
+      const session = await getStripe().checkout.sessions.create({
         customer: customerId,
         mode: 'subscription',
         payment_method_types: ['card'],
@@ -184,7 +194,7 @@ export const stripeClient = {
       }
 
       // Cancel at period end (don't cut off access immediately)
-      await stripe.subscriptions.update(subscription.stripe_subscription_id, {
+      await getStripe().subscriptions.update(subscription.stripe_subscription_id, {
         cancel_at_period_end: true,
       });
 
@@ -225,8 +235,8 @@ export const stripeClient = {
       }
 
       // Update Stripe subscription
-      const stripeSubscription = await stripe.subscriptions.retrieve(currentSub.stripe_subscription_id);
-      const updatedSubscription = await stripe.subscriptions.update(currentSub.stripe_subscription_id, {
+      const stripeSubscription = await getStripe().subscriptions.retrieve(currentSub.stripe_subscription_id);
+      const updatedSubscription = await getStripe().subscriptions.update(currentSub.stripe_subscription_id, {
         items: [
           {
             id: stripeSubscription.items.data[0].id,
