@@ -1,6 +1,155 @@
 {
-  "sortedMiddleware": [],
-  "middleware": {},
-  "functions": {},
+  "sortedMiddleware": [
+    "/"
+  ],
+  "middleware": {
+    "/": {
+      "files": [
+        "prerender-manifest.js",
+        "server/edge-runtime-webpack.js",
+        "server/middleware.js"
+      ],
+      "name": "middleware",
+      "page": "/",
+      "matchers": [
+        {
+          "regexp": "^(?:\\/(_next\\/data\\/[^/]{1,}))?\\/api\\/perplexity(?:\\/((?:[^\\/#\\?]+?)(?:\\/(?:[^\\/#\\?]+?))*))?(.json)?[\\/#\\?]?$",
+          "originalSource": "/api/perplexity/:path*"
+        },
+        {
+          "regexp": "^(?:\\/(_next\\/data\\/[^/]{1,}))?\\/api\\/reports(?:\\/((?:[^\\/#\\?]+?)(?:\\/(?:[^\\/#\\?]+?))*))?(.json)?[\\/#\\?]?$",
+          "originalSource": "/api/reports/:path*"
+        },
+        {
+          "regexp": "^(?:\\/(_next\\/data\\/[^/]{1,}))?\\/api\\/v1(?:\\/((?:[^\\/#\\?]+?)(?:\\/(?:[^\\/#\\?]+?))*))?(.json)?[\\/#\\?]?$",
+          "originalSource": "/api/v1/:path*"
+        }
+      ],
+      "wasm": [],
+      "assets": []
+    }
+  },
+  "functions": {
+    "/api/intelligence/context/route": {
+      "files": [
+        "server/middleware-build-manifest.js",
+        "server/middleware-react-loadable-manifest.js",
+        "server/next-font-manifest.js",
+        "prerender-manifest.js",
+        "server/edge-runtime-webpack.js",
+        "server/app/api/intelligence/context/route.js"
+      ],
+      "name": "app/api/intelligence/context/route",
+      "page": "/api/intelligence/context/route",
+      "matchers": [
+        {
+          "regexp": "^/api/intelligence/context$",
+          "originalSource": "/api/intelligence/context"
+        }
+      ],
+      "wasm": [],
+      "assets": []
+    },
+    "/api/intelligence/brief/route": {
+      "files": [
+        "server/middleware-build-manifest.js",
+        "server/middleware-react-loadable-manifest.js",
+        "server/next-font-manifest.js",
+        "prerender-manifest.js",
+        "server/edge-runtime-webpack.js",
+        "server/app/api/intelligence/brief/route.js"
+      ],
+      "name": "app/api/intelligence/brief/route",
+      "page": "/api/intelligence/brief/route",
+      "matchers": [
+        {
+          "regexp": "^/api/intelligence/brief$",
+          "originalSource": "/api/intelligence/brief"
+        }
+      ],
+      "wasm": [],
+      "assets": []
+    },
+    "/api/intelligence/experts/route": {
+      "files": [
+        "server/middleware-build-manifest.js",
+        "server/middleware-react-loadable-manifest.js",
+        "server/next-font-manifest.js",
+        "prerender-manifest.js",
+        "server/edge-runtime-webpack.js",
+        "server/app/api/intelligence/experts/route.js"
+      ],
+      "name": "app/api/intelligence/experts/route",
+      "page": "/api/intelligence/experts/route",
+      "matchers": [
+        {
+          "regexp": "^/api/intelligence/experts$",
+          "originalSource": "/api/intelligence/experts"
+        }
+      ],
+      "wasm": [],
+      "assets": []
+    },
+    "/api/intelligence/news/route": {
+      "files": [
+        "server/middleware-build-manifest.js",
+        "server/middleware-react-loadable-manifest.js",
+        "server/next-font-manifest.js",
+        "prerender-manifest.js",
+        "server/edge-runtime-webpack.js",
+        "server/app/api/intelligence/news/route.js"
+      ],
+      "name": "app/api/intelligence/news/route",
+      "page": "/api/intelligence/news/route",
+      "matchers": [
+        {
+          "regexp": "^/api/intelligence/news$",
+          "originalSource": "/api/intelligence/news"
+        }
+      ],
+      "wasm": [],
+      "assets": []
+    },
+    "/api/intelligence/trends/route": {
+      "files": [
+        "server/middleware-build-manifest.js",
+        "server/middleware-react-loadable-manifest.js",
+        "server/next-font-manifest.js",
+        "prerender-manifest.js",
+        "server/edge-runtime-webpack.js",
+        "server/app/api/intelligence/trends/route.js"
+      ],
+      "name": "app/api/intelligence/trends/route",
+      "page": "/api/intelligence/trends/route",
+      "matchers": [
+        {
+          "regexp": "^/api/intelligence/trends$",
+          "originalSource": "/api/intelligence/trends"
+        }
+      ],
+      "wasm": [],
+      "assets": []
+    },
+    "/api/subscriptions/webhook/route": {
+      "files": [
+        "server/middleware-build-manifest.js",
+        "server/middleware-react-loadable-manifest.js",
+        "server/next-font-manifest.js",
+        "prerender-manifest.js",
+        "server/edge-runtime-webpack.js",
+        "server/app/api/subscriptions/webhook/route.js"
+      ],
+      "name": "app/api/subscriptions/webhook/route",
+      "page": "/api/subscriptions/webhook/route",
+      "matchers": [
+        {
+          "regexp": "^/api/subscriptions/webhook$",
+          "originalSource": "/api/subscriptions/webhook"
+        }
+      ],
+      "wasm": [],
+      "assets": []
+    }
+  },
   "version": 2
 }

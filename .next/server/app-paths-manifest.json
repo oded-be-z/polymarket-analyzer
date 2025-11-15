@@ -1,3 +1,18 @@
 {
-  "/page": "app/page.js"
+  "/page": "app/page.js",
+  "/_not-found": "app/_not-found.js",
+  "/api/reports/download/[id]/route": "app/api/reports/download/[id]/route.js",
+  "/api/reports/status/route": "app/api/reports/status/route.js",
+  "/api/subscriptions/checkout/route": "app/api/subscriptions/checkout/route.js",
+  "/api/subscriptions/portal/route": "app/api/subscriptions/portal/route.js",
+  "/api/reports/generate/route": "app/api/reports/generate/route.js",
+  "/api/subscriptions/status/route": "app/api/subscriptions/status/route.js",
+  "/market/[id]/page": "app/market/[id]/page.js",
+  "/pricing/page": "app/pricing/page.js",
+  "/api/intelligence/context/route": "app/api/intelligence/context/route.js",
+  "/api/intelligence/brief/route": "app/api/intelligence/brief/route.js",
+  "/api/intelligence/experts/route": "app/api/intelligence/experts/route.js",
+  "/api/intelligence/news/route": "app/api/intelligence/news/route.js",
+  "/api/intelligence/trends/route": "app/api/intelligence/trends/route.js",
+  "/api/subscriptions/webhook/route": "app/api/subscriptions/webhook/route.js"
 }
