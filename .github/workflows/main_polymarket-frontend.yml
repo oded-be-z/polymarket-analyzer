@@ -23,6 +23,5 @@ jobs:
         uses: azure/webapps-deploy@v3
         with:
           app-name: 'polymarket-frontend'
-          slot-name: 'Production'
           package: .
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_B28A4717E2204E4482E883A05D575A26 }}
