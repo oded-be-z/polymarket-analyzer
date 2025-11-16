@@ -19,27 +19,30 @@ export default function Home() {
       <div className="flex flex-1">
         <Sidebar />
 
-        <main className="flex-1 p-6">
-          {/* Hero Section - Sentimark Gradient Header */}
-          <div className="mb-8 rounded-xl bg-gradient-primary p-8 shadow-glow">
-            <h1 className="text-4xl font-extrabold text-white mb-3">
-              Sentimark Intelligence
-            </h1>
-            <p className="text-lg text-white/90 max-w-2xl">
-              AI-powered prediction market analysis with real-time sentiment tracking,
-              expert insights, and professional reports.
-            </p>
-          </div>
+        <main className="flex-1 p-4 md:p-6">
+          {/* Centered container with max-width */}
+          <div className="max-w-7xl mx-auto">
+            {/* Hero Section - Sentimark Gradient Header */}
+            <div className="mb-6 md:mb-8 rounded-xl bg-gradient-primary p-4 md:p-6 shadow-glow">
+              <h1 className="text-2xl md:text-3xl font-extrabold text-white mb-2">
+                Sentimark Intelligence
+              </h1>
+              <p className="text-sm md:text-base text-white/90 max-w-2xl">
+                AI-powered prediction market analysis with real-time sentiment tracking,
+                expert insights, and professional reports.
+              </p>
+            </div>
 
-          {/* Active Markets Section */}
-          <div className="mb-6">
-            <h2 className="text-2xl font-bold text-text-primary mb-2">Active Markets</h2>
-            <p className="text-text-secondary">
-              Browse trending prediction markets with live sentiment analysis
-            </p>
-          </div>
+            {/* Active Markets Section */}
+            <div className="mb-4 md:mb-6">
+              <h2 className="text-xl md:text-2xl font-bold text-text-primary mb-2">Active Markets</h2>
+              <p className="text-sm md:text-base text-text-secondary">
+                Browse trending prediction markets with live sentiment analysis
+              </p>
+            </div>
 
-          <MarketList />
+            <MarketList />
+          </div>
         </main>
       </div>
 
